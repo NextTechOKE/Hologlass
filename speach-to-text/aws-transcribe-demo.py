@@ -18,8 +18,6 @@ class EventHandler(TranscriptResultStreamHandler):
                 print(alt.transcript)
 
 
-
-
 async def mic_stream():
     # This function wraps the raw input stream from the microphone forwarding
     # the blocks to an asyncio.Queue.
