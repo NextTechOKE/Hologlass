@@ -51,7 +51,6 @@ async def write_chunks(stream):
     # chunks should be rate limited to match the real-time bitrate of the
     # audio stream to avoid signing issues.
     async for (chunk, status) in mic_stream():
-        print("status: ", status)
         await stream.input_stream.send_audio_event(audio_chunk = chunk)
     await stream.input_stream.end_stream()
 
