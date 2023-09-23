@@ -1,0 +1,3 @@
+aiofile
+pyaudio
+amazon-transcribe
