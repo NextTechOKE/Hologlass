@@ -12,6 +12,8 @@ from amazon_transcribe.client import TranscribeStreamingClient
 from amazon_transcribe.handlers import TranscriptResultStreamHandler
 from amazon_transcribe.model import TranscriptEvent
 from amazon_transcribe.utils import apply_realtime_delay
+import os
+
 
 """
 Here's an example of a custom event handler you can extend to
@@ -25,7 +27,7 @@ BYTES_PER_SAMPLE = 2
 CHANNEL_NUMS = 1
 
 # An example file can be found at tests/integration/assets/test.wav
-AUDIO_PATH = "test.wav"
+AUDIO_PATH = os.path.join(os.path.dirname(__file__), "audio/test.wav")
 CHUNK_SIZE = 1024 * 8
 REGION = "us-west-2"
 
