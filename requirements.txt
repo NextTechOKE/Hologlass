@@ -1,3 +1,4 @@
-aiofile
-pyaudio
-amazon-transcribe
+aiofile==3.8.8
+pyaudio==0.2.13
+amazon-transcribe==0.6.2
+sounddevice==0.4.6
