@@ -5,6 +5,8 @@ import asyncio
 # with `pip install aiofile`.
 import aiofile
 import pyaudio
+from sys import platform
+import argparse
 
 from amazon_transcribe.client import TranscribeStreamingClient
 from amazon_transcribe.handlers import TranscriptResultStreamHandler
@@ -27,6 +29,25 @@ AUDIO_PATH = "test.wav"
 CHUNK_SIZE = 1024 * 8
 REGION = "us-west-2"
 
+def main():
+    parser = argparse.ArgumentParser()
+    args = parser.parse_args()
+    if 'linux' in platform:
+            mic_name = args.default_microphone
+            if not mic_name or mic_name == 'list':
+                print("Available microphone devices are: ")
+                for index, name in enumerate(sr.Microphone.list_microphone_names()):
+                    print(f"Microphone with name \"{name}\" found")   
+                return
+            else:
+                for index, name in enumerate(sr.Microphone.list_microphone_names()):
+                    if mic_name in name:
+                        source = sr.Microphone(sample_rate=16000, device_index=index)
+                        break
+    else:
+        source = sr.Microphone(sample_rate=16000)
+
+
 
 class MyEventHandler(TranscriptResultStreamHandler):
     async def handle_transcript_event(self, transcript_event: TranscriptEvent):
@@ -39,6 +60,7 @@ class MyEventHandler(TranscriptResultStreamHandler):
 
 
 async def basic_transcribe():
+    main()
     # Setup up our client with our chosen AWS region
     client = TranscribeStreamingClient(region=REGION)
 
