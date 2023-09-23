@@ -4,8 +4,8 @@ from amazon_transcribe.client import TranscribeStreamingClient
 from amazon_transcribe.handlers import TranscriptResultStreamHandler
 from amazon_transcribe.model import TranscriptEvent
 import sounddevice
-import numpy as np
 import wave
+import os
 
 
 """
@@ -22,8 +22,6 @@ class EventHandler(TranscriptResultStreamHandler):
         results = transcript_event.transcript.results
         for result in results:
             for i, alt in enumerate(result.alternatives):
-
-                # replace the element in transcript parts with the same start time with the new transcript
                 for part in transcript_parts:
                     if part["start_time"] == result.start_time:
                         part["transcript"] = alt.transcript
@@ -31,21 +29,15 @@ class EventHandler(TranscriptResultStreamHandler):
                 else:
                     transcript_parts.append({"start_time": result.start_time, "transcript": alt.transcript})
                 print(transcript_parts)
-                pass
 
 
 async def mic_stream():
-    # This function wraps the raw input stream from the microphone forwarding
-    # the blocks to an asyncio.Queue.
     loop = asyncio.get_event_loop()
     input_queue = asyncio.Queue()
 
     def callback(indata, frame_count, time_info, status):
         loop.call_soon_threadsafe(input_queue.put_nowait, (bytes(indata), status))
 
-    # Be sure to use the correct parameters for the audio stream that matches
-    # the audio formats described for the source language you'll be using:
-    # https://docs.aws.amazon.com/transcribe/latest/dg/streaming.html
     stream = sounddevice.RawInputStream(
         channels=1,
         samplerate=16000,
@@ -53,8 +45,6 @@ async def mic_stream():
         blocksize=int(1024 * 2),
         dtype="int16",
     )
-    # Initiate the audio stream and asynchronously yield the audio chunks
-    # as they become available.
     with stream:
         while True:
             indata, status = await input_queue.get()
@@ -62,13 +52,7 @@ async def mic_stream():
 
 
 
-
-
-
 async def write_chunks(transcript_stream, wave_file: wave.Wave_write):
-    # NOTE: For pre-recorded files longer than 5 minutes, the sent audio
-    # chunks should be rate limited to match the real-time bitrate of the
-    # audio stream to avoid signing issues.
     async for (chunk, status) in mic_stream():
         wave_file.writeframes(chunk)
         await transcript_stream.input_stream.send_audio_event(audio_chunk = chunk)
@@ -86,7 +70,9 @@ async def transcribe():
 
     # Instantiate our handler and start processing events
     handler = EventHandler(transcript_stream.output_stream)
-    wave_file = wave.open('output.wav', 'wb')
+    dirname = os.path.dirname(__file__)
+    filepath = os.path.join(dirname, 'audio/output.wav')
+    wave_file = wave.open(filepath, 'wb')
     wave_file.setnchannels(1)
     wave_file.setsampwidth(2)
     wave_file.setframerate(16000)
