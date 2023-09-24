@@ -324,7 +324,6 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(RED)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
-            print_text(str(transcript + "\n"))
             stream.last_transcript_was_final = False
 
         continue

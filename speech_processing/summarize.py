@@ -8,8 +8,9 @@ def summarize(text):
     load_dotenv()
     client = cohere.Client(os.environ.get("COHERE_API_KEY"))
 
+    # fill text with spaces so that it is at least 250 characters long
     while len(text) < 250:
-        text = text + text
+        text += " "
 
     response = client.summarize(
         text=text,
