@@ -28,7 +28,7 @@ class EventHandler(TranscriptResultStreamHandler):
                         break
                 else:
                     transcript_parts.append({"start_time": result.start_time, "transcript": alt.transcript})
-                print(transcript_parts)
+                print(str(transcript_parts) + "\n")
 
 
 async def mic_stream():
