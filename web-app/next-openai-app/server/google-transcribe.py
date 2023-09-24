@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 import cohere
 import os
 import openai
-from server import set_summary
+from server import return_summary
 
 load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY") 
@@ -56,6 +56,8 @@ def generate_summary(text):
     extractiveness='medium'
     )
 
+    return_summary(response.summary)
+    
     return response.summary
 
 """Google Cloud Speech API sample application using the streaming API.
@@ -334,7 +336,6 @@ def listen_print_loop(responses: object, stream: object) -> object:
                 sys.stdout.write("Exiting...\n")
                 print("          summary: ", summary)
                 print("          generated: ", generate_summary(summary))
-                set_summary(summary)
                 stream.closed = True
                 break
         else:
