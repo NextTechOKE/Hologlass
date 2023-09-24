@@ -20,8 +20,7 @@ import sys
 import re
 import queue
 
-import arduino
-from arduino import data_write
+
 import pyautogui
 import time
 
@@ -34,8 +33,9 @@ timestamps = [0]
 transcripts = [""]
 
 def auto_gui(sentence):
+    print("auto_gui called")
     # Set the position where you want to start typing
-    start_x, start_y = 1127, 726
+    start_x, start_y = 1208, 791
 
     # Split the sentence into words
     words = sentence.split()
@@ -355,6 +355,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+            auto_gui(str(corrected_time) + ": " + transcript + "\n")
 
             summary += transcript
 
