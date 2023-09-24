@@ -324,7 +324,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(RED)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
-            print_text(str(transcript + "\n"))
+            #write_text(str(transcript + "\n"))
             stream.last_transcript_was_final = False
 
         continue
@@ -385,14 +385,12 @@ async def live_transcribe():
                 sys.stdout.write("\n")
             stream.new_stream = True
 
-    print(timestamps)
-    print(transcripts)
 
 
 
 
 async def main() -> None:
-    await asyncio.gather(live_transcribe(), record_continuously(), diarize_from_wav_file())
+    await asyncio.gather(live_transcribe(), record_continuously())
 
 
 
