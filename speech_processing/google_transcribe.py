@@ -19,6 +19,7 @@ import time
 import sys
 import re
 import queue
+from print_text import write_text
 
 
 import pyautogui
@@ -33,32 +34,6 @@ from summarize import summarize
 #openai.api_key = "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"
 timestamps = [0]
 transcripts = [""]
-
-def auto_gui(sentence):
-    print("auto_gui called")
-    # Set the position where you want to start typing
-    start_x, start_y = 1208, 791
-
-    # Split the sentence into words
-    words = sentence.split()
-
-    # Move the mouse to the starting position
-    pyautogui.moveTo(start_x, start_y)
-
-    time.sleep (5)
-    # Loop through each word
-    for word in words:
-        # Type the word
-        pyautogui.typewrite(word, interval=0.05)  # Adjust interval as needed
-
-        # Press Enter
-        pyautogui.press("enter")
-
-        # Wait for a short while (you can adjust the duration)
-        time.sleep(0.5)
-
-    # Move the mouse away at the end (optional)
-    pyautogui.moveTo(0, 0)
 
 
 
@@ -324,7 +299,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
-            #auto_gui(str(transcript + "\n")
+            #write_to_gui(str(transcript + "\n")
 
             full_transcript += transcript
 
@@ -345,11 +320,13 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(RED)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
-            #auto_gui(str(transcript + "\n")
+            print_text(str(transcript + "\n"))
             stream.last_transcript_was_final = False
 
         continue
         return transcript
+
+
 
 
 def main() -> None:

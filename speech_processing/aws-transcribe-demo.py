@@ -6,7 +6,9 @@ from amazon_transcribe.model import TranscriptEvent
 import sounddevice
 import wave
 import os
+import queue
 
+from print_text import write_text
 
 """
 code mostly from:
@@ -16,18 +18,25 @@ https://github.com/awslabs/amazon-transcribe-streaming-sdk/blob/develop/examples
 
 transcript_parts = []
 
+total_transcript = queue.Queue()
+
 
 class EventHandler(TranscriptResultStreamHandler):
     async def handle_transcript_event(self, transcript_event: TranscriptEvent):
         results = transcript_event.transcript.results
         for result in results:
             for i, alt in enumerate(result.alternatives):
+
                 for part in transcript_parts:
                     if part["start_time"] == result.start_time:
                         part["transcript"] = alt.transcript
                         break
                 else:
                     transcript_parts.append({"start_time": result.start_time, "transcript": alt.transcript})
+
+
+                total_transcript.put(alt.transcript)
+
                 print(str(transcript_parts) + "\n")
 
 
@@ -42,7 +51,7 @@ async def mic_stream():
         channels=1,
         samplerate=16000,
         callback=callback,
-        blocksize=int(1024 * 2),
+        blocksize=int(1024 * 0.5),
         dtype="int16",
     )
     with stream:
