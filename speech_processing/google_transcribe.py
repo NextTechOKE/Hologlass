@@ -390,14 +390,15 @@ async def live_transcribe():
 
 
 
-def main() -> None:
-    asyncio.gather(live_transcribe(), record_continuously())
+
+async def main() -> None:
+    await asyncio.gather(live_transcribe(), record_continuously(), diarize_from_wav_file())
 
 
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(main())
+    asyncio.run(main())
     loop.close()
 
