@@ -44,19 +44,10 @@ void loop() {
     Serial.println(inChar, HEX);  // Print in hexadecimal
     
     if (inChar == '\n') {
-      // Update the OLED display when a newline character is received
-      display.setTextSize(1);
-      display.setTextColor(SSD1306_WHITE);
-      display.setCursor(currentX, currentLine);
-      
-      display.print(inputString);
-      display.display();
-      
-      // Move cursor to the end of the current line
-      currentX += 6 * inputString.length();  // Assuming text size 1, each character is 6 pixels wide
+      int textWidth = 6 * inputString.length();  // Calculate text width
       
       // Check for screen width limit and wrap text to the next line
-      if(currentX > (SCREEN_WIDTH - 6)) {
+      if(currentX + textWidth > SCREEN_WIDTH) {
         currentX = 0;
         currentLine += 10;  // Move down by 10 pixels
         
@@ -66,6 +57,17 @@ void loop() {
           display.clearDisplay();
         }
       }
+      
+      // Update the OLED display
+      display.setTextSize(1);
+      display.setTextColor(SSD1306_WHITE);
+      display.setCursor(currentX, currentLine);
+      
+      display.print(inputString);
+      display.display();
+      
+      // Update current position
+      currentX += textWidth;
       
       // Reset the input string
       inputString = "";
