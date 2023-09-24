@@ -11,3 +11,5 @@ google-cloud-speech==2.21.0
 pyautogui==0.9.54
 scipy==1.11.2
 soundfile==0.12.1
+supabase==1.0.4
+streamlit==1.27.0

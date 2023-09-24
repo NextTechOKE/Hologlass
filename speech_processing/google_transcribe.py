@@ -33,6 +33,17 @@ from summarize import summarize
 import subprocess
 # import openai
 
+import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv()
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+
+
 
 
 #openai.api_key = "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"
@@ -319,6 +330,10 @@ def listen_print_loop(responses: object, stream: object) -> object:
                 print("          summary: ", full_transcript)
                 final_summary = summarize(full_transcript)
                 print("          generated: ", final_summary)
+
+                supabase.table("summaries").insert({"content": final_summary}).execute()
+
+                result = supabase.table("summaries").select("*").execute().data[-1]
 
                 subprocess.Popen(["streamlit", "run", "stream.py", f"--{transcripts}", f"--{final_summary}"])
                 

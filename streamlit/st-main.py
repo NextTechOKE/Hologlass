@@ -6,14 +6,12 @@ import time
 st.title("a title")
 
 
-st.write("transcript")
+st.write("Summary")
 st.write(str(time.time))
 
 
 def main():
 
-
-with st.empty():
 
 
 

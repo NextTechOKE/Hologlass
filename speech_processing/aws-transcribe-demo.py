@@ -11,15 +11,25 @@ from print_text import write_text
 
 from record_to_file import record_continuously
 
+import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv()
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 """
 code mostly from:
 https://github.com/awslabs/amazon-transcribe-streaming-sdk/blob/develop/examples/simple_mic.py
 """
 
 
+
 transcript_parts = []
 
 total_transcript = ""
+
 
 
 class EventHandler(TranscriptResultStreamHandler):
@@ -96,3 +106,6 @@ if __name__ == "__main__":
     asyncio.set_event_loop(loop)
     loop.run_until_complete(transcribe())
     loop.close()
+
+
+
