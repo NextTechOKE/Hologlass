@@ -390,7 +390,6 @@ async def live_transcribe():
 
 
 
-
 def main() -> None:
     asyncio.gather(live_transcribe(), record_continuously())
 

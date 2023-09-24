@@ -44,18 +44,21 @@ async def mic_stream():
 
 
 
-async def record_continuously(wave_file: wave.Wave_write):
+async def record_continuously(wave_file: wave.Wave_write=None):
+
+    if not wave_file:
+        dirname = os.path.dirname(__file__)
+        filepath = os.path.join(dirname, 'audio/output.wav')
+        wave_file = wave.open(filepath, 'wb')
+        wave_file.setnchannels(1)
+        wave_file.setsampwidth(2)
+        wave_file.setframerate(16000)
+
     async for (chunk, status) in mic_stream():
         wave_file.writeframes(chunk)
 
 
 if __name__ == "__main__":
-    dirname = os.path.dirname(__file__)
-    filepath = os.path.join(dirname, 'audio/output.wav')
-    wave_file = wave.open(filepath, 'wb')
-    wave_file.setnchannels(1)
-    wave_file.setsampwidth(2)
-    wave_file.setframerate(16000)
-    asyncio.run(record_continuously(wave_file))
+    asyncio.run(record_continuously())
 
 

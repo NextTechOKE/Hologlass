@@ -9,6 +9,8 @@ import os
 
 from print_text import write_text
 
+from record_to_file import record_continuously
+
 """
 code mostly from:
 https://github.com/awslabs/amazon-transcribe-streaming-sdk/blob/develop/examples/simple_mic.py
@@ -59,9 +61,9 @@ async def mic_stream():
 
 
 
-async def write_chunks(transcript_stream, wave_file: wave.Wave_write):
+async def write_chunks(transcript_stream, wave_file: wave.Wave_write=None):
     async for (chunk, status) in mic_stream():
-        wave_file.writeframes(chunk)
+        # wave_file.writeframes(chunk)
         await transcript_stream.input_stream.send_audio_event(audio_chunk = chunk)
     await transcript_stream.input_stream.end_stream()
 
@@ -77,13 +79,16 @@ async def transcribe():
 
     # Instantiate our handler and start processing events
     handler = EventHandler(transcript_stream.output_stream)
-    dirname = os.path.dirname(__file__)
-    filepath = os.path.join(dirname, 'audio/output.wav')
-    wave_file = wave.open(filepath, 'wb')
-    wave_file.setnchannels(1)
-    wave_file.setsampwidth(2)
-    wave_file.setframerate(16000)
-    await asyncio.gather(write_chunks(transcript_stream, wave_file), handler.handle_events())
+    # dirname = os.path.dirname(__file__)
+    # filepath = os.path.join(dirname, 'audio/output.wav')
+    # wave_file = wave.open(filepath, 'wb')
+    # wave_file.setnchannels(1)
+    # wave_file.setsampwidth(2)
+    # wave_file.setframerate(16000)
+    # await asyncio.gather(write_chunks(transcript_stream, wave_file), handler.handle_events())
+
+    
+    await asyncio.gather(write_chunks(transcript_stream), handler.handle_events(), record_continuously())
 
 
 if __name__ == "__main__":
