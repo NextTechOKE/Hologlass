@@ -8,11 +8,14 @@ def summarize(text):
     load_dotenv()
     client = cohere.Client(os.environ.get("COHERE_API_KEY"))
 
+    while len(text) < 250:
+        text = text + text
+
     response = client.summarize(
-    text=text,
-    model='command',
-    length='medium',
-    extractiveness='high'
+        text=text,
+        model='command',
+        length='medium',
+        extractiveness='high'
     )
 
     return response.summary
