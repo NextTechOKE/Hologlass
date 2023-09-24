@@ -20,11 +20,43 @@ import sys
 import re
 import queue
 
-import openai
+import arduino
+from arduino import data_write
+import pyautogui
+import time
+
+# import openai
 
 #openai.api_key = "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"
 timestamps = [0]
 transcripts = [""]
+
+
+def auto_gui(sentence):
+    # Set the position where you want to start typing
+    start_x, start_y = 1127, 726
+
+    # Split the sentence into words
+    words = sentence.split()
+
+    # Move the mouse to the starting position
+    pyautogui.moveTo(start_x, start_y)
+
+    time.sleep (5)
+    # Loop through each word
+    for word in words:
+        # Type the word
+        pyautogui.typewrite(word, interval=0.1)  # Adjust interval as needed
+
+        # Press Enter
+        pyautogui.press("enter")
+
+
+        # Wait for a short while (you can adjust the duration)
+        time.sleep(0.5)
+
+    # Move the mouse away at the end (optional)
+    pyautogui.moveTo(0, 0)
 
 
 def split_text(text):
@@ -258,6 +290,8 @@ class ResumableMicrophoneStream:
             yield b"".join(data)
 
 
+
+
 def listen_print_loop(responses: object, stream: object) -> object:
     """Iterates through server responses and prints them.
 
@@ -323,6 +357,8 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+            auto_gui(str(corrected_time) + ": " + transcript + "\n")
+
 
             summary += transcript
 
