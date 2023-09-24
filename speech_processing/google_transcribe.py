@@ -331,7 +331,8 @@ def listen_print_loop(responses: object, stream: object) -> object:
                 final_summary = summarize(full_transcript)
                 print("          generated: ", final_summary)
 
-                supabase.table("summaries").insert({"content": final_summary}).execute()
+                supabase.table("summaries").insert({"summary": final_summary, "transcript": full_transcript}).execute()
+
 
                 subprocess.Popen(["streamlit", "run", "stream.py", f"--{transcripts}", f"--{final_summary}"])
                 

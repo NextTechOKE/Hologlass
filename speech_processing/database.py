@@ -8,7 +8,7 @@ key: str = os.environ.get("SUPABASE_KEY")
 
 supabase: Client = create_client(url, key)
 
-supabase.table("summaries").insert({"content": "this is a summary"}).execute()
+supabase.table("summaries").insert({"summary": "this is a summary"}).execute()
 
 result = supabase.table("summaries").select("*").execute().data[-1]
 

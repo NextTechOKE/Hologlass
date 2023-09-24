@@ -22,12 +22,11 @@ supabase: Client = create_client(url, key)
 # args = parser.parse_args()
 
 
-
-
+result = supabase.table("summaries").select("*").execute().data[-1]
 st.title("Transcript and Summary")
 st.header("Transcript")
+st.text(result["transcript"])
 # st.text(args.transcripts)
 st.header("Summary")
-result = supabase.table("summaries").select("*").execute().data[-1]
-st.text(result["content"])
+st.text(result["summary"])
 # st.text(args.summary)

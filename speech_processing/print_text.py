@@ -3,9 +3,12 @@ import time
 
 def write_text(text):
     # for testing, print to console
-    print(text)
+    testing = True
 
-    # write_to_gui(text)
+    if(testing):
+        print(text)
+    else:
+        write_to_gui(text)
 
 
     
