@@ -30,7 +30,7 @@ import pyautogui
 import time
 
 from summarize import summarize
-
+import subprocess
 # import openai
 
 
@@ -317,7 +317,11 @@ def listen_print_loop(responses: object, stream: object) -> object:
                 sys.stdout.write(YELLOW)
                 sys.stdout.write("Exiting...\n")
                 print("          summary: ", full_transcript)
-                print("          generated: ", summarize(full_transcript))
+                final_summary = summarize(full_transcript)
+                print("          generated: ", final_summary)
+
+                subprocess.Popen(["streamlit", "run", "stream.py", f"--{transcripts}", f"--{final_summary}"])
+                
                 stream.closed = True
                 break
         else:
