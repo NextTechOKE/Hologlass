@@ -7,4 +7,5 @@ numpy==1.26.0
 cohere==4.27
 python-dotenv==1.0.0
 openai==0.28.0
-google==3.0.0
+google-cloud-speech==2.21.0
+pyautogui==0.9.54

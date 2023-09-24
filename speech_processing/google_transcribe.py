@@ -47,11 +47,10 @@ def auto_gui(sentence):
     # Loop through each word
     for word in words:
         # Type the word
-        pyautogui.typewrite(word, interval=0.1)  # Adjust interval as needed
+        pyautogui.typewrite(word, interval=0.05)  # Adjust interval as needed
 
         # Press Enter
         pyautogui.press("enter")
-
 
         # Wait for a short while (you can adjust the duration)
         time.sleep(0.5)
@@ -59,38 +58,6 @@ def auto_gui(sentence):
     # Move the mouse away at the end (optional)
     pyautogui.moveTo(0, 0)
 
-def split_text(text):
-    max_chunk_size = 2048
-    chunks = []
-    current_chunk = ""
-    for sentence in text.split("."):
-        if len(current_chunk) + len(sentence) < max_chunk_size:
-            current_chunk += sentence + "."
-        else:
-            chunks.append(current_chunk.strip())
-            current_chunk = sentence + "."
-    if current_chunk:
-        chunks.append(current_chunk.strip())
-    return chunks
-
-
-def generate_summary(text):
-    input_chunks = split_text(text)
-    output_chunks = []
-    for chunk in input_chunks:
-        response = openai.Completion.create(
-            engine="davinci",
-            prompt=(
-                f"Please summarize the following text in one sentence:\n{chunk}\n\nSummary:"),
-            temperature=0.5,
-            max_tokens=1024,
-            n=1,
-            stop=None
-        )
-        summary = response.choices[0].text.strip()
-        output_chunks.append(summary)
-        break
-    return " ".join(output_chunks)
 
 
 """Google Cloud Speech API sample application using the streaming API.
