@@ -19,10 +19,13 @@ import time
 import sys
 import re
 import queue
-
+from dotenv import load_dotenv
+import cohere
+import os
 import openai
 
-openai.api_key = "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"
+load_dotenv()
+openai.api_key = os.environ.get("OPENAI_API_KEY") 
 timestamps = [0]
 transcripts = [""]
 
@@ -43,24 +46,16 @@ def split_text(text):
 
 
 def generate_summary(text):
-    print(f"text before splited into chuncks: {text}")
-    text="Gandhi led nationwide campaigns for easing poverty, expanding women's rights, building religious and ethnic amity, ending untouchability, and, above all, achieving swaraj or self-rule. Gandhi adopted the short dhoti woven with hand-spun yarn as a mark of identification with India's rural poor. He began to live in a self-sufficient residential community, to eat simple food, and undertake long fasts as a means of both introspection and political protest. Bringing anti-colonial nationalism to the common Indians, Gandhi led them in challenging the British-imposed salt tax with the 400 km (250 mi) Dandi Salt March in 1930 and in calling for the British to quit India in 1942."
-    input_chunks = split_text(text)
-    output_chunks = []
-    for chunk in input_chunks:
-        response = openai.Completion.create(
-            engine="davinci",
-            prompt=(
-                f"Please summarize the following text in one sentence:\n{chunk}\n\nSummary:"),
-            temperature=0.5,
-            max_tokens=1024,
-            n=1,
-            stop=None
-        )
-        summary = response.choices[0].text.strip()
-        output_chunks.append(summary)
-    return " ".join(output_chunks)
+    client = cohere.Client(os.environ.get("COHERE_API_KEY"))
 
+    response = client.summarize(
+    text=text,
+    model='command',
+    length='medium',
+    extractiveness='medium'
+    )
+
+    return response.summary
 
 """Google Cloud Speech API sample application using the streaming API.
 

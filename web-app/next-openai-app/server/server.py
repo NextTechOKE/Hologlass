@@ -5,14 +5,19 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# /api/home
-@app.route("/api/text", methods=['GET'])
-def return_home():
-    return jsonify({
-        'message': "we connected 😈",
-        'people': ['Jack', 'Harry', 'Arpan']
-    })
+summary = ""
 
+def set_summary(text):
+    global summary
+    summary = text
+
+# /api/text
+@app.route("/api/text", methods=['GET'])
+def return_summary():
+    return jsonify({
+        'message': summary,
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
+
