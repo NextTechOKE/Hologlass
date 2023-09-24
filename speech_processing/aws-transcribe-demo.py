@@ -18,7 +18,7 @@ https://github.com/awslabs/amazon-transcribe-streaming-sdk/blob/develop/examples
 
 transcript_parts = []
 
-total_transcript = queue.Queue()
+total_transcript = ""
 
 
 class EventHandler(TranscriptResultStreamHandler):
@@ -32,12 +32,11 @@ class EventHandler(TranscriptResultStreamHandler):
                         part["transcript"] = alt.transcript
                         break
                 else:
+                    # If this is a new chunk of speech, create a new transcript part, and print the old
+                    # transcript part to the output source.
                     transcript_parts.append({"start_time": result.start_time, "transcript": alt.transcript})
-
-
-                total_transcript.put(alt.transcript)
-
-                print(str(transcript_parts) + "\n")
+                    if (len(transcript_parts) > 1):
+                        write_text(transcript_parts[-2]["transcript"])
 
 
 async def mic_stream():
@@ -51,7 +50,7 @@ async def mic_stream():
         channels=1,
         samplerate=16000,
         callback=callback,
-        blocksize=int(1024 * 0.5),
+        blocksize=1024//24,
         dtype="int16",
     )
     with stream:
