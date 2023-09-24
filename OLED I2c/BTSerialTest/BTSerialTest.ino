@@ -15,8 +15,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 SoftwareSerial BTSerial(10, 11); // RX, TX
 
 String inputString = ""; // A string to hold incoming data
-int currentX = 0;  // Current horizontal position
-int currentLine = 0;  // Current line on the screen
+int currentLine = 0;  // Current position on the screen (horizontal)
 
 void setup() {
   // Initialize Serial for Bluetooth module
@@ -47,24 +46,18 @@ void loop() {
       // Update the OLED display when a newline character is received
       display.setTextSize(1);
       display.setTextColor(SSD1306_WHITE);
-      display.setCursor(currentX, currentLine);
+      display.setCursor(currentLine, 0);  // Horizontal position, vertical line
       
       display.print(inputString);
       display.display();
       
       // Move cursor to the end of the current line
-      currentX += 6 * inputString.length();  // Assuming text size 1, each character is 6 pixels wide
+      currentLine += 6 * inputString.length();  // Assuming text size 1, each character is 6 pixels wide
       
-      // Check for screen width limit and wrap text to the next line
-      if(currentX > (SCREEN_WIDTH - 6)) {
-        currentX = 0;
-        currentLine += 10;  // Move down by 10 pixels
-        
-        // Check if we've reached the display height, then clear the display
-        if(currentLine > (SCREEN_HEIGHT - 10)) {
-          currentLine = 0;
-          display.clearDisplay();
-        }
+      // Check for screen width limit and wrap text
+      if(currentLine > (SCREEN_WIDTH - 6)) {
+        currentLine = 0;
+        display.clearDisplay();
       }
       
       // Reset the input string
