@@ -333,8 +333,6 @@ def listen_print_loop(responses: object, stream: object) -> object:
 
                 supabase.table("summaries").insert({"content": final_summary}).execute()
 
-                result = supabase.table("summaries").select("*").execute().data[-1]
-
                 subprocess.Popen(["streamlit", "run", "stream.py", f"--{transcripts}", f"--{final_summary}"])
                 
                 stream.closed = True
