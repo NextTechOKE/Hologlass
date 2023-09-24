@@ -19,16 +19,45 @@ import time
 import sys
 import re
 import queue
-from dotenv import load_dotenv
-import cohere
-import os
-import openai
 
-load_dotenv()
-openai.api_key = os.environ.get("OPENAI_API_KEY") 
+
+import pyautogui
+import time
+
+# import openai
+
+
+
+#openai.api_key = "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"
 timestamps = [0]
 transcripts = [""]
 
+def auto_gui(sentence):
+    print("auto_gui called")
+    # Set the position where you want to start typing
+    start_x, start_y = 1208, 791
+
+    # Split the sentence into words
+    words = sentence.split()
+
+    # Move the mouse to the starting position
+    pyautogui.moveTo(start_x, start_y)
+
+    time.sleep (5)
+    # Loop through each word
+    for word in words:
+        # Type the word
+        pyautogui.typewrite(word, interval=0.1)  # Adjust interval as needed
+
+        # Press Enter
+        pyautogui.press("enter")
+
+
+        # Wait for a short while (you can adjust the duration)
+        time.sleep(0.5)
+
+    # Move the mouse away at the end (optional)
+    pyautogui.moveTo(0, 0)
 
 def split_text(text):
     max_chunk_size = 2048
@@ -46,16 +75,23 @@ def split_text(text):
 
 
 def generate_summary(text):
-    client = cohere.Client(os.environ.get("COHERE_API_KEY"))
+    input_chunks = split_text(text)
+    output_chunks = []
+    for chunk in input_chunks:
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt=(
+                f"Please summarize the following text in one sentence:\n{chunk}\n\nSummary:"),
+            temperature=0.5,
+            max_tokens=1024,
+            n=1,
+            stop=None
+        )
+        summary = response.choices[0].text.strip()
+        output_chunks.append(summary)
+        break
+    return " ".join(output_chunks)
 
-    response = client.summarize(
-    text=text,
-    model='command',
-    length='medium',
-    extractiveness='medium'
-    )
-
-    return response.summary
 
 """Google Cloud Speech API sample application using the streaming API.
 
@@ -319,6 +355,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+            auto_gui(str(corrected_time) + ": " + transcript + "\n")
 
             summary += transcript
 
@@ -399,8 +436,8 @@ def main() -> None:
                 sys.stdout.write("\n")
             stream.new_stream = True
 
-    #print(timestamps)
-    #print(transcripts)
+    print(timestamps)
+    print(transcripts)
 
 
 if __name__ == "__main__":
