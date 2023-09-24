@@ -6,7 +6,6 @@ from amazon_transcribe.model import TranscriptEvent
 import sounddevice
 import wave
 import os
-import queue
 
 from print_text import write_text
 

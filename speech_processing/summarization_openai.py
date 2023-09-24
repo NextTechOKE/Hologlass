@@ -13,7 +13,13 @@ def split_text(text):
     if current_chunk:
         chunks.append(current_chunk.strip())
     return chunks
+async def record_audio(filename, duration, fs=44100):
 
+    while True:
+        recording = sounddevice.rec(int(duration * fs), samplerate=fs, channels=2)
+        await asyncio.sleep(duration)  # Wait for the recording to finish
+        write(filename, fs, recording)  # Save as WAV file
+        print(f"Recording saved to {filename}.")
 
 
 def generate_summary(text):
