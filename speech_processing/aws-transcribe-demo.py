@@ -6,9 +6,10 @@ from amazon_transcribe.model import TranscriptEvent
 import sounddevice
 import wave
 import os
-import queue
 
 from print_text import write_text
+
+from record_to_file import record_continuously
 
 """
 code mostly from:
@@ -18,7 +19,7 @@ https://github.com/awslabs/amazon-transcribe-streaming-sdk/blob/develop/examples
 
 transcript_parts = []
 
-total_transcript = queue.Queue()
+total_transcript = ""
 
 
 class EventHandler(TranscriptResultStreamHandler):
@@ -32,12 +33,11 @@ class EventHandler(TranscriptResultStreamHandler):
                         part["transcript"] = alt.transcript
                         break
                 else:
+                    # If this is a new chunk of speech, create a new transcript part, and print the old
+                    # transcript part to the output source.
                     transcript_parts.append({"start_time": result.start_time, "transcript": alt.transcript})
-
-
-                total_transcript.put(alt.transcript)
-
-                print(str(transcript_parts) + "\n")
+                    if (len(transcript_parts) > 1):
+                        write_text(transcript_parts[-2]["transcript"])
 
 
 async def mic_stream():
@@ -51,7 +51,7 @@ async def mic_stream():
         channels=1,
         samplerate=16000,
         callback=callback,
-        blocksize=int(1024 * 0.5),
+        blocksize=1024//24,
         dtype="int16",
     )
     with stream:
@@ -61,9 +61,9 @@ async def mic_stream():
 
 
 
-async def write_chunks(transcript_stream, wave_file: wave.Wave_write):
+async def write_chunks(transcript_stream, wave_file: wave.Wave_write=None):
     async for (chunk, status) in mic_stream():
-        wave_file.writeframes(chunk)
+        # wave_file.writeframes(chunk)
         await transcript_stream.input_stream.send_audio_event(audio_chunk = chunk)
     await transcript_stream.input_stream.end_stream()
 
@@ -79,13 +79,16 @@ async def transcribe():
 
     # Instantiate our handler and start processing events
     handler = EventHandler(transcript_stream.output_stream)
-    dirname = os.path.dirname(__file__)
-    filepath = os.path.join(dirname, 'audio/output.wav')
-    wave_file = wave.open(filepath, 'wb')
-    wave_file.setnchannels(1)
-    wave_file.setsampwidth(2)
-    wave_file.setframerate(16000)
-    await asyncio.gather(write_chunks(transcript_stream, wave_file), handler.handle_events())
+    # dirname = os.path.dirname(__file__)
+    # filepath = os.path.join(dirname, 'audio/output.wav')
+    # wave_file = wave.open(filepath, 'wb')
+    # wave_file.setnchannels(1)
+    # wave_file.setsampwidth(2)
+    # wave_file.setframerate(16000)
+    # await asyncio.gather(write_chunks(transcript_stream, wave_file), handler.handle_events())
+
+    
+    await asyncio.gather(write_chunks(transcript_stream), handler.handle_events(), record_continuously())
 
 
 if __name__ == "__main__":

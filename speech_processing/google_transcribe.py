@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio 
+
 import requests
 import pyaudio
 from google.cloud import speech
@@ -20,6 +22,8 @@ import sys
 import re
 import queue
 from print_text import write_text
+
+from record_to_file import record_continuously
 
 
 import pyautogui
@@ -327,9 +331,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
         return transcript
 
 
-
-
-def main() -> None:
+async def live_transcribe():
     """start bidirectional streaming from microphone input to speech API"""
     client = speech.SpeechClient()
     config = speech.RecognitionConfig(
@@ -387,6 +389,15 @@ def main() -> None:
     print(transcripts)
 
 
+
+def main() -> None:
+    asyncio.gather(live_transcribe(), record_continuously())
+
+
+
 if __name__ == "__main__":
-    main()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(main())
+    loop.close()
 

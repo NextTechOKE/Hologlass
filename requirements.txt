@@ -9,3 +9,5 @@ python-dotenv==1.0.0
 openai==0.28.0
 google-cloud-speech==2.21.0
 pyautogui==0.9.54
+scipy==1.11.2
+soundfile==0.12.1
