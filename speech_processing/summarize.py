@@ -12,7 +12,7 @@ def summarize(text):
     text=text,
     model='command',
     length='medium',
-    extractiveness='medium'
+    extractiveness='high'
     )
 
     return response.summary
