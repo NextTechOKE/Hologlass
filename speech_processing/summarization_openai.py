@@ -1,4 +1,4 @@
-
+import openai
 
 def split_text(text):
     max_chunk_size = 2048

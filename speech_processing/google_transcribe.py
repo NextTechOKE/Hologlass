@@ -24,6 +24,8 @@ import queue
 import pyautogui
 import time
 
+from summarize import summarize
+
 # import openai
 
 
@@ -75,7 +77,7 @@ Example usage:
 # [START speech_transcribe_infinite_streaming]
 
 
-summary = ""
+full_transcript = ""
 
 # Audio recording parameters
 STREAMING_LIMIT = 240000  # 4 minutes
@@ -279,7 +281,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
     Returns:
         The transcript of the result
     """
-    global summary
+    global full_transcript
     for response in responses:
         if get_current_time() - stream.start_time > STREAMING_LIMIT:
             stream.start_time = get_current_time()
@@ -324,7 +326,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
             auto_gui(str(corrected_time) + ": " + transcript + "\n")
 
-            summary += transcript
+            full_transcript += transcript
 
             stream.is_final_end_time = stream.result_end_time
             stream.last_transcript_was_final = True
@@ -335,8 +337,8 @@ def listen_print_loop(responses: object, stream: object) -> object:
             if re.search(r"\b(exit|quit)\b", transcript, re.I):
                 sys.stdout.write(YELLOW)
                 sys.stdout.write("Exiting...\n")
-                print("          summary: ", summary)
-                print("          generated: ", generate_summary(summary))
+                print("          summary: ", full_transcript)
+                print("          generated: ", summarize(full_transcript))
                 stream.closed = True
                 break
         else:
