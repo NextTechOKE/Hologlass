@@ -22,7 +22,7 @@ import queue
 
 import openai
 
-#openai.api_key = "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"
+
 timestamps = [0]
 transcripts = [""]
 
