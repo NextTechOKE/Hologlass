@@ -392,7 +392,7 @@ async def live_transcribe():
 
 
 async def main() -> None:
-    await asyncio.gather(live_transcribe(), record_continuously(), diarize_from_wav_file())
+    await asyncio.gather(live_transcribe(), record_continuously())
 
 
 
