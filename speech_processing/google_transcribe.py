@@ -1,3 +1,4 @@
+
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,6 +43,7 @@ load_dotenv()
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
+pyautogui.FAILSAFE = False
 
 
 
@@ -314,7 +316,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
-            #write_to_gui(str(transcript + "\n")
+            write_text(transcript)
 
             full_transcript += transcript
 
@@ -333,8 +335,7 @@ def listen_print_loop(responses: object, stream: object) -> object:
 
                 supabase.table("summaries").insert({"summary": final_summary, "transcript": full_transcript}).execute()
 
-
-                subprocess.Popen(["streamlit", "run", "stream.py", f"--{transcripts}", f"--{final_summary}"])
+                subprocess.Popen(["streamlit", "run", "stream.py"])
                 
                 stream.closed = True
                 break
@@ -342,7 +343,9 @@ def listen_print_loop(responses: object, stream: object) -> object:
             sys.stdout.write(RED)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
-            #write_text(str(transcript + "\n"))
+
+            print("writing")
+
             stream.last_transcript_was_final = False
 
         continue
